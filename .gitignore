@@ -1,0 +1,13 @@
+.DS_Store
+.idea
+.ipynb_checkpoints
+__pycache__
+vgg16_training
+datasets
+*.npy
+*.pyc
+*.png
+*.jpg
+*.eps
+*.hdf5
+*.log

@@ -11,3 +11,7 @@ datasets
 *.eps
 *.hdf5
 *.log
+*.p
+combinations_testset.txt
+combinations_valset.txt
+*.caffemodel

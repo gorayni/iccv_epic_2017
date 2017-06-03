@@ -13,20 +13,51 @@ class Image(object):
         return 'Image(path: ' + repr(self.path) + ', time: ' + repr(self.time) + ', label: ' + repr(self.label) + ')'
 
 
-class Date(object):
-    def __init__(self, date, images):
+class Day(object):
+    def __init__(self, date, images, user=None):
         self.date = date
         self.images = images
+        self.user = user
+
+    @property
+    def num_images(self):
+        return len(self.images)
 
     def __repr__(self):
         return 'Date(date: ' + repr(self.date) + ', Images: ' + repr(self.images) + ')'
 
+    def __eq__(self, other):
+        return self.date == other.date
+
+    def __cmp__(self, other):
+        return cmp(self.date, other.date)
+
+    def __len__(self):
+        return self.num_images
+
+    def __add__(self, other):
+        return self.num_images + other
+
+    def __radd__(self, other):
+        return other + self.num_images
 
 class User(object):
-    def __init__(self, user, dates):
-        self.user = user
-        self.dates = dates
+    def __init__(self, id_, days):
+        self.id_= id_
+        self.days = days
 
+        for day in days:
+            day.user = self
+
+    @property
+    def num_images(self):
+        return sum([d.num_images for d in self.days])
+
+    def __repr__(self):
+        return 'User(id: ' + repr(self.id_) + ', Days: ' + repr(self.days) + ')'
+
+    def __eq__(self, other):
+        return self.id_ == other.id_
 
 import IO
 

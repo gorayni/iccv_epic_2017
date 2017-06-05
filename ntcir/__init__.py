@@ -2,10 +2,12 @@ from __future__ import division
 
 import os
 import numpy as np
+import utils
 from collections import namedtuple
 from collections import defaultdict
 
 Sequence = namedtuple('Sequence', 'start end')
+
 
 class Image(object):
     def __init__(self, path, time, label):
@@ -45,9 +47,10 @@ class Day(object):
     def __radd__(self, other):
         return other + self.num_images
 
+
 class User(object):
     def __init__(self, id_, days):
-        self.id_= id_
+        self.id_ = id_
         self.days = days
 
         for day in days:
@@ -63,34 +66,24 @@ class User(object):
     def __eq__(self, other):
         return self.id_ == other.id_
 
-def time2ind(time):
-    hour, minute, second =  [int(time[i:i+2]) for i in range(0, 6, 2)]
-    index = 120*hour+2*minute+(1 if second > 30 else 0)
-    return index
-
-def time2sec(time):
-    hour, minute, second =  [int(time[i:i+2]) for i in range(0, 6, 2)]
-    index = 3600*hour+60*minute+second
-    return index
 
 def get_sequences(users, max_minute_separation=5):
-    
     sequences = defaultdict(lambda: defaultdict(list))
-    for user in users:    
-        
-        for i, day in enumerate(user.days):        
-            times = np.asarray([time2sec(img.time) for img in day.images])
-            time_diff = np.diff(times)/60
-            
+    for user in users:
+        for i, day in enumerate(user.days):
+            times = np.asarray([utils.time2sec(img.time) for img in day.images])
+            time_diff = np.diff(times) / 60
+
             start_ind = 0
-            for ind in np.where(time_diff>max_minute_separation)[0]:
-                seq = Sequence(start_ind, ind+1)
+            for ind in np.where(time_diff > max_minute_separation)[0]:
+                seq = Sequence(start_ind, ind + 1)
                 sequences[user.id_][day.date].append(seq)
-                start_ind = ind+1
+                start_ind = ind + 1
 
             seq = Sequence(start_ind, day.num_images)
-            sequences[user.id_][day.date].append(seq)            
-    return sequences
+            sequences[user.id_][day.date].append(seq)
+    return utils.default_to_regular(sequences)
+
 
 import IO
 

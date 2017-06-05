@@ -2,6 +2,7 @@ from __future__ import division
 import re
 import os
 import numpy as np
+import utils
 from . import Image
 from . import Day
 from . import User
@@ -22,27 +23,25 @@ def load_categories(filepaths):
 
 
 def load_annotations(filepaths):
-    users = defaultdict(lambda: defaultdict(list))
+    images = defaultdict(lambda: defaultdict(list))
     lines = np.loadtxt(filepaths.annotations, str, delimiter='\n')
     for i, line in enumerate(lines):
         path, label = line.rsplit(' ', 1)
         id_, date, time = path.split(os.path.sep)
         label = int(label)
         path = os.path.join(filepaths.images_dir, path)
-
         time = re.sub("[^0-9]", "", time.split('_')[-1])
 
         image = Image(path, time, label)
-        users[id_][date].append(image)
+        images[id_][date].append(image)
 
-    sorted_users = list()
-    for id_, dates in users.iteritems():
-        sorted_days = list()
-        for date, images in dates.iteritems():
+    users = defaultdict(lambda: defaultdict(list))
+    for user_id, days in images.items():
+        user = User(user_id, list())
+        for date, images in days.items():
             images.sort(key=lambda img: img.time)
-            sorted_days.append(Day(date, images))
-        sorted_days.sort(key=lambda day: day.date)
-
-        sorted_users.append(User(id_, sorted_days))
-    sorted_users.sort(key=lambda user: user.id_)
-    return sorted_users
+            day = Day(date, images, user)
+            user.days.append(day)
+            users[user_id][date] = day
+        user.days.sort(key=lambda day: day.date)
+    return utils.default_to_regular(users)

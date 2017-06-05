@@ -12,6 +12,7 @@ datasets
 *.hdf5
 *.log
 *.p
+*.prototxt
 combinations_testset.txt
 combinations_valset.txt
 *.caffemodel

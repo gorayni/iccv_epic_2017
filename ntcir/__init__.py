@@ -8,6 +8,7 @@ from collections import defaultdict
 
 Sequence = namedtuple('Sequence', 'start end')
 
+Batch = namedtuple('Batch', 'user_id date indices')
 
 class Image(object):
     def __init__(self, path, time, label):
@@ -84,6 +85,31 @@ def get_sequences(users, max_minute_separation=5):
             sequences[user.id_][day.date].append(seq)
     return utils.default_to_regular(sequences)
 
+
+def read_split(filepath):
+    days = list()
+    with open(filepath) as f:
+        for line in f.readlines():
+            user_id, date = line.replace("\n", "").split(' ')
+            days.append((user_id, date))
+    return days
+
+
+def get_batches(split_set, sequences, batch_size=10):
+    batches = list()
+    for user_id, date in split_set:
+        for seq in sequences[user_id][date]:
+            if seq.end-seq.start > batch_size:
+                num_windows = seq.end - batch_size + 1
+                window_size = batch_size
+            else:
+                num_windows = 1
+                window_size = seq.end-seq.start
+
+            for start_ind in range(num_windows):
+                indices = np.arange(start_ind, start_ind+window_size)+seq.start
+                batches.append(Batch(user_id,date,indices))
+    return batches
 
 import IO
 

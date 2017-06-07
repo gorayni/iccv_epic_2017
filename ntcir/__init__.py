@@ -100,7 +100,7 @@ def get_batches(split_set, sequences, batch_size=10):
     for user_id, date in split_set:
         for seq in sequences[user_id][date]:
             if seq.end-seq.start > batch_size:
-                num_windows = seq.end - batch_size + 1
+                num_windows = seq.end - seq.start-batch_size+1
                 window_size = batch_size
             else:
                 num_windows = 1
@@ -108,7 +108,8 @@ def get_batches(split_set, sequences, batch_size=10):
 
             for start_ind in range(num_windows):
                 indices = np.arange(start_ind, start_ind+window_size)+seq.start
-                batches.append(Batch(user_id,date,indices))
+                b = Batch(user_id,date,indices)
+                batches.append(b)
     return batches
 
 import IO

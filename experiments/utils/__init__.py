@@ -31,11 +31,11 @@ class HistoryLog(Callback):
         np.savetxt(fpath, epoch.T, delimiter=",")
 
 
-def load_images_batch(image_data_generator, users, batch, num_classes, target_size=(256, 256)):
+def load_images_batch(image_data_generator, users, batch, num_classes=21, target_size=(224, 224)):
     image_shape = target_size + (3,)
 
-    batch_x = np.zeros((batch.size,) + image_shape, dtype=K.floatx())
-    batch_y = np.zeros((batch.size, num_classes), dtype='float32')
+    batch_x = np.zeros((1,batch.size,) + image_shape, dtype=K.floatx())
+    batch_y = np.zeros((1,batch.size, num_classes), dtype='float32')
 
     for i, ind in enumerate(batch.indices):
         image = users[batch.user_id][batch.date].images[ind]
@@ -43,7 +43,15 @@ def load_images_batch(image_data_generator, users, batch, num_classes, target_si
         x = img_to_array(img, dim_ordering='default')
         x = image_data_generator.random_transform(x)
         x = image_data_generator.standardize(x)
-        batch_x[i] = x
-
-        batch_y[i, image.label] = 1.
+        batch_x[0, i] = x
+        batch_y[0, i, image.label] = 1.
     return batch_x, batch_y
+
+
+def generate_batch(image_data_generator, users, batches, steps_per_epoch=None, num_classes=21, target_size=(224, 224)):
+    if not steps_per_epoch:
+        steps_per_epoch = len(batches)
+    while True:
+        np.random.shuffle(batches)
+        for i in range(steps_per_epoch):
+            yield load_images_batch(image_data_generator, users, batches[i], num_classes, target_size)

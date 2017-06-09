@@ -109,9 +109,9 @@ def read_split(filepath):
     return days
 
 
-def get_batches(split_set, sequences, batch_size=10):
+def get_training_batches(training_set, sequences, batch_size=10):
     batches = list()
-    for user_id, date in split_set:
+    for user_id, date in training_set:
         for seq in sequences[user_id][date]:
             if seq.end - seq.start > batch_size:
                 num_windows = seq.end - seq.start - batch_size + 1
@@ -126,6 +126,16 @@ def get_batches(split_set, sequences, batch_size=10):
                 batches.append(b)
     return batches
 
+
+def get_batches(split_set, sequences, batch_size=10):
+    batches = list()
+    for user_id, date in split_set:
+        for s in sequences[user_id][date]:            
+            for start_ind in range(s.start, s.end, batch_size):
+                indices = np.arange(start_ind, start_ind + batch_size) + s.start
+                b = Batch(user_id, date, indices)                
+                batches.append(b)
+    return batches
 
 import IO
 

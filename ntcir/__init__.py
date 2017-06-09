@@ -8,7 +8,6 @@ from collections import defaultdict
 
 Sequence = namedtuple('Sequence', 'start end')
 
-Batch = namedtuple('Batch', 'user_id date indices')
 
 class Image(object):
     def __init__(self, path, time, label):
@@ -68,6 +67,21 @@ class User(object):
         return self.id_ == other.id_
 
 
+class Batch(object):
+    def __init__(self, user_id, date, indices):
+        self.user_id = user_id
+        self.date = date
+        self.indices = indices
+
+    @property
+    def size(self):
+        return len(self.indices)
+
+    def __repr__(self):
+        return 'Batch(user_id: ' + repr(self.user_id) + ', date: ' + repr(self.date) + ', indices: ' + repr(
+            self.indices) + ')'
+
+
 def get_sequences(users, max_minute_separation=5):
     sequences = defaultdict(lambda: defaultdict(list))
     for user in users:
@@ -99,18 +113,19 @@ def get_batches(split_set, sequences, batch_size=10):
     batches = list()
     for user_id, date in split_set:
         for seq in sequences[user_id][date]:
-            if seq.end-seq.start > batch_size:
-                num_windows = seq.end - seq.start-batch_size+1
+            if seq.end - seq.start > batch_size:
+                num_windows = seq.end - seq.start - batch_size + 1
                 window_size = batch_size
             else:
                 num_windows = 1
-                window_size = seq.end-seq.start
+                window_size = seq.end - seq.start
 
             for start_ind in range(num_windows):
-                indices = np.arange(start_ind, start_ind+window_size)+seq.start
-                b = Batch(user_id,date,indices)
+                indices = np.arange(start_ind, start_ind + window_size) + seq.start
+                b = Batch(user_id, date, indices)
                 batches.append(b)
     return batches
+
 
 import IO
 

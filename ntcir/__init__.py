@@ -130,8 +130,9 @@ def get_training_batches(training_set, sequences, batch_size=10):
 def get_batches(split_set, sequences, batch_size=10):
     batches = list()
     for user_id, date in split_set:
-        for s in sequences[user_id][date]:            
-            for start_ind in range(s.start, s.end, batch_size):
+        for s in sequences[user_id][date]:
+            end_ind = int(s.end/batch_size)*batch_size
+            for start_ind in range(s.start, end_ind, batch_size):
                 indices = np.arange(start_ind, start_ind + batch_size) + s.start
                 b = Batch(user_id, date, indices)                
                 batches.append(b)

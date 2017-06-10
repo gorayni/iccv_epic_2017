@@ -40,7 +40,7 @@ def load_images_batch(image_data_generator, users, batch, num_classes=21, target
     for i, ind in enumerate(batch.indices):
         image = users[batch.user_id][batch.date].images[ind]
         img = load_img(image.path, target_size=target_size, grayscale=False)
-        x = img_to_array(img, dim_ordering='default')
+        x = img_to_array(img)
         x = image_data_generator.random_transform(x)
         x = image_data_generator.standardize(x)
         batch_x[0, i] = x
@@ -54,4 +54,5 @@ def generate_batch(image_data_generator, users, batches, steps_per_epoch=None, n
     while True:
         np.random.shuffle(batches)
         for i in range(steps_per_epoch):
-            yield load_images_batch(image_data_generator, users, batches[i], num_classes, target_size)
+            batch_x, batch_y = load_images_batch(image_data_generator, users, batches[i], num_classes, target_size)
+            yield (batch_x, batch_y)

@@ -27,7 +27,7 @@ def vgg16_first_phase_model(weights='imagenet', img_width=224, img_height=224):
     x = Dropout(0.5)(x)
     x = Dense(21, activation='softmax', name='predictions')(x)
 
-    return Model(input=base_model.input, output=x)
+    return Model(name='VGG-16', inputs=[base_model.input], outputs=[x])
 
 
 def vgg_16_second_phase_model(weights=None, img_width=224, img_height=224):

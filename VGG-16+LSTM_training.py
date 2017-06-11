@@ -1,6 +1,5 @@
 from __future__ import division
 
-import brightside as bs
 import numpy as np
 import ntcir
 import ntcir.IO as IO

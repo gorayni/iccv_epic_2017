@@ -21,9 +21,9 @@ def vgg16_first_phase_model(weights='imagenet', img_width=224, img_height=224):
 
     x = base_model.output
     x = Flatten(name='flatten')(x)
-    x = Dense(4096, activation='relu', name='fc1', W_constraint=maxnorm(2.))(x)
+    x = Dense(4096, activation='relu', name='fc1', kernel_constraint=maxnorm(2.))(x)
     x = Dropout(0.5)(x)
-    x = Dense(4096, activation='relu', name='fc2', W_constraint=maxnorm(2.))(x)
+    x = Dense(4096, activation='relu', name='fc2', kernel_constraint=maxnorm(2.))(x)
     x = Dropout(0.5)(x)
     x = Dense(21, activation='softmax', name='predictions')(x)
 

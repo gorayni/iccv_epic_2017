@@ -29,11 +29,9 @@ def train_net(timestep=10):
     training_batches = ntcir.get_training_batches(training_set, sequences, batch_size=timestep)
     validation_batches = ntcir.get_batches(validation_set, sequences, batch_size=timestep)
 
-    if K.backend() == 'tensorflow':
-        base_model_weights = 'weights.VGG-16.best.tf.hdf5'
-    else:
-        base_model_weights = 'weights.VGG-16.best.th.hdf5'
+    backend = 'tf' if K.backend() == 'tensorflow' else 'th'
 
+    base_model_weights = 'weights.VGG-16.best.{}.hdf5'.format(backend)
     for learning_rate in [0.0001, 0.00005, 0.000025, 0.000075]:
         K.set_learning_phase(1)
 
@@ -59,7 +57,7 @@ def train_net(timestep=10):
 
         # checkpoint
         weights_filepath = "weights.VGG-16+LSTM.timesteps_" + str(timestep) + ".lr_" + str(
-            learning_rate) + ".{epoch:02d}.hdf5"
+            learning_rate) + ".{epoch:02d}." + backend + ".hdf5"
         checkpoint = ModelCheckpoint(weights_filepath, monitor='val_acc', verbose=1)
         history = HistoryLog()
 

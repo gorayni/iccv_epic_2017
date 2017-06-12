@@ -30,8 +30,7 @@ validation_batches = ntcir.get_batches(validation_set, sequences)
 for learning_rate in [0.0001, 0.00005, 0.000025, 0.000075]:
   K.set_learning_phase(1)
 
-  np.random.seed(42)
-  learning_rate=0.00001
+  np.random.seed(42)  
   sgd = SGD(lr=learning_rate, decay=0.000005, momentum=0.9, nesterov=True)
   model = exp.vgg_16_plus_lstm(vgg16_weights='weights.VGG-16.best.hdf5')
   model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])

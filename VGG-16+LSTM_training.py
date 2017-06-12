@@ -13,6 +13,7 @@ from keras.callbacks import ModelCheckpoint
 from experiments.utils import HistoryLog
 from experiments.utils import generate_batch
 import experiments as exp
+import os
 
 import keras.backend.tensorflow_backend as KTF
 

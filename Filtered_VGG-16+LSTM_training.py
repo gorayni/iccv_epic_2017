@@ -13,6 +13,7 @@ from experiments.utils import load_images_batch
 import experiments as exp
 
 import keras.backend.tensorflow_backend as KTF
+import os
 
 def get_session(gpu_fraction=0.8):
     import tensorflow as tf

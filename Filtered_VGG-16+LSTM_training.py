@@ -21,6 +21,7 @@ sequences = ntcir.get_sequences(sorted_users, num_frames_per_day)
 training_set = ntcir.read_split('training_split.txt')
 validation_set = ntcir.read_split('validation_split.txt')
 
+print 'Inicio programa'
 overlap = 2
 num_training_batches = 0
 training_batches = list()
@@ -53,7 +54,7 @@ for learning_rate in [0.00001, 0.0001, 0.00005, 0.000025, 0.000075]:
     val_datagen = ImageDataGenerator(rescale=1. / 255)
 
     sgd = SGD(lr=learning_rate, decay=0.000005, momentum=0.9, nesterov=True)
-    model = exp.filtered_vgg_16_plus_lstm('weights.VGG-16.best.hdf5')
+    model = exp.filtered_vgg_16_plus_lstm('weights.VGG-16.best.TH.hdf5')
 
     model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
 
@@ -113,4 +114,4 @@ for learning_rate in [0.00001, 0.0001, 0.00005, 0.000025, 0.000075]:
     np.savetxt('lstm.Filtered_VGG16+LSTM.lr_{}.acc.log'.format(learning_rate), np.vstack((train_acc, val_acc)).T,
                delimiter=",")
     np.savetxt('lstm.Filtered_VGG16+LSTM.lr_{}.loss.log'.format(learning_rate), loss.T, delimiter=",")
-    K.clear_session()
+    # K.clear_session()

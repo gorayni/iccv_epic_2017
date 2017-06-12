@@ -144,7 +144,7 @@ def filtered_vgg_16_plus_lstm(weights=None, timestep=10, img_width=224, img_heig
     x = add([x, prev_values_input]) 
 
     x = TimeDistributed(Dropout(0.5))(x)
-    x = LSTM(512, return_sequences=True, name='lstm1')(x)
+    x = LSTM(64, return_sequences=True, name='lstm1')(x)
     x = TimeDistributed(Dropout(0.5))(x)
     x = TimeDistributed(Dense(21, activation='softmax'), name='predictions_')(x)
         

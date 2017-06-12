@@ -15,7 +15,6 @@ from experiments.utils import generate_batch
 import experiments as exp
 import os
 
-import keras.backend.tensorflow_backend as KTF
 
 def get_session(gpu_fraction=0.8):
     import tensorflow as tf
@@ -106,6 +105,7 @@ if __name__ == '__main__':
     args = parse_args()
 
     if K.backend() == 'tensorflow':
+      import keras.backend.tensorflow_backend as KTF
       KTF.set_session(get_session(0.25))
 
     train_net(args.timestep)

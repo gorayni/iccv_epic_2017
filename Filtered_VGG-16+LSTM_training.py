@@ -12,7 +12,6 @@ from keras.preprocessing.image import ImageDataGenerator
 from experiments.utils import load_images_batch
 import experiments as exp
 
-import keras.backend.tensorflow_backend as KTF
 import os
 
 def get_session(gpu_fraction=0.8):
@@ -153,6 +152,7 @@ def parse_args():
 if __name__ == '__main__':
 
     if K.backend() == 'tensorflow':
+        import keras.backend.tensorflow_backend as KTF
         KTF.set_session(get_session(0.25))
 
     args = parse_args()

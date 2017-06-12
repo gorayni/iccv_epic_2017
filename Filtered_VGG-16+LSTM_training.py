@@ -12,6 +12,20 @@ from keras.preprocessing.image import ImageDataGenerator
 from experiments.utils import load_images_batch
 import experiments as exp
 
+import keras.backend.tensorflow_backend as KTF
+
+def get_session(gpu_fraction=0.8):
+    import tensorflow as tf
+
+    num_threads = os.environ.get('OMP_NUM_THREADS')
+    gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=gpu_fraction)
+
+    if num_threads:
+        return tf.Session(config=tf.ConfigProto(
+            gpu_options=gpu_options, intra_op_parallelism_threads=num_threads))
+    else:
+        return tf.Session(config=tf.ConfigProto(gpu_options=gpu_options))
+
 
 def train_net(timestep=10, overlap=2):
     users = IO.load_annotations(ntcir.filepaths)
@@ -136,5 +150,9 @@ def parse_args():
 
 
 if __name__ == '__main__':
+
+    if K.backend() == 'tensorflow':
+        KTF.set_session(get_session(0.25))
+
     args = parse_args()
     train_net(args.timestep, args.overlap)

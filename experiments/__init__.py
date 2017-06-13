@@ -123,9 +123,9 @@ def filtered_vgg_16_plus_lstm(weights=None, timestep=10, img_width=224, img_heig
     x = TimeDistributed(MaxPooling2D((2, 2), strides=(2, 2)), name='block4_pool')(x)
 
     # Block 5
-    x = TimeDistributed(Convolution2D(512, (3, 3), activation='relu', padding='same', trainable=False), name='block5_conv1')(x)
-    x = TimeDistributed(Convolution2D(512, (3, 3), activation='relu', padding='same', trainable=False), name='block5_conv2')(x)
-    x = TimeDistributed(Convolution2D(512, (3, 3), activation='relu', padding='same', trainable=False), name='block5_conv3')(x)
+    x = TimeDistributed(Convolution2D(512, (3, 3), activation='relu', padding='same'), name='block5_conv1')(x)
+    x = TimeDistributed(Convolution2D(512, (3, 3), activation='relu', padding='same'), name='block5_conv2')(x)
+    x = TimeDistributed(Convolution2D(512, (3, 3), activation='relu', padding='same'), name='block5_conv3')(x)
     x = TimeDistributed(MaxPooling2D((2, 2), strides=(2, 2)), name='block5_pool')(x)
 
     # Classification block

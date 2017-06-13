@@ -60,7 +60,7 @@ def train_net(timestep=10, overlap=2):
     weights_filepath = "weights." + model_fname + ".lr_{lr:f}.{epoch:02d}." + backend + ".hdf5"
     num_classes = 21
 
-    for learning_rate in [0.00001, 0.0001, 0.00005, 0.000025, 0.000075]:
+    for learning_rate in [0.0001, 0.00005]:
         K.set_learning_phase(1)
 
         train_datagen = ImageDataGenerator(rescale=1. / 255,
@@ -84,7 +84,7 @@ def train_net(timestep=10, overlap=2):
         loss = list()
         mask = np.ones((1, timestep, num_classes))
         prev_values = np.zeros((1, timestep, num_classes))
-        for epoch in np.arange(5):
+        for epoch in np.arange(10):
 
             epoch_train_acc = list()
             epoch_val_acc = list()

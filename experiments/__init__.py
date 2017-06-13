@@ -47,30 +47,27 @@ def vgg_16_plus_lstm(weights=None, vgg16_weights=None, timestep=10, img_width=22
     # Block 1
     model = Sequential(name='vgg16+lstm');
 
-    model.add(TimeDistributed(Convolution2D(64, (3, 3), activation='relu', padding='same'), name='block1_conv1',
+    model.add(TimeDistributed(Convolution2D(64, (3, 3), activation='relu', padding='same', trainable=False), name='block1_conv1',
                               input_shape=input_shape))
-    model.add(TimeDistributed(Convolution2D(64, (3, 3), activation='relu', padding='same'), name='block1_conv2'))
+    model.add(TimeDistributed(Convolution2D(64, (3, 3), activation='relu', padding='same', trainable=False), name='block1_conv2'))
     model.add(TimeDistributed(MaxPooling2D((2, 2), strides=(2, 2)), name='block1_pool'))
 
     # Block 2
-    model.add(TimeDistributed(Convolution2D(128, (3, 3), activation='relu', padding='same'), name='block2_conv1'))
-    model.add(TimeDistributed(Convolution2D(128, (3, 3), activation='relu', padding='same'), name='block2_conv2'))
+    model.add(TimeDistributed(Convolution2D(128, (3, 3), activation='relu', padding='same', trainable=False), name='block2_conv1'))
+    model.add(TimeDistributed(Convolution2D(128, (3, 3), activation='relu', padding='same', trainable=False), name='block2_conv2'))
     model.add(TimeDistributed(MaxPooling2D((2, 2), strides=(2, 2)), name='block2_pool'))
 
     # Block 3
-    model.add(TimeDistributed(Convolution2D(256, (3, 3), activation='relu', padding='same'), name='block3_conv1'))
-    model.add(TimeDistributed(Convolution2D(256, (3, 3), activation='relu', padding='same'), name='block3_conv2'))
-    model.add(TimeDistributed(Convolution2D(256, (3, 3), activation='relu', padding='same'), name='block3_conv3'))
+    model.add(TimeDistributed(Convolution2D(256, (3, 3), activation='relu', padding='same', trainable=False), name='block3_conv1'))
+    model.add(TimeDistributed(Convolution2D(256, (3, 3), activation='relu', padding='same', trainable=False), name='block3_conv2'))
+    model.add(TimeDistributed(Convolution2D(256, (3, 3), activation='relu', padding='same', trainable=False), name='block3_conv3'))
     model.add(TimeDistributed(MaxPooling2D((2, 2), strides=(2, 2)), name='block3_pool'))
 
     # Block 4
-    model.add(TimeDistributed(Convolution2D(512, (3, 3), activation='relu', padding='same'), name='block4_conv1'))
-    model.add(TimeDistributed(Convolution2D(512, (3, 3), activation='relu', padding='same'), name='block4_conv2'))
-    model.add(TimeDistributed(Convolution2D(512, (3, 3), activation='relu', padding='same'), name='block4_conv3'))
+    model.add(TimeDistributed(Convolution2D(512, (3, 3), activation='relu', padding='same', trainable=False), name='block4_conv1'))
+    model.add(TimeDistributed(Convolution2D(512, (3, 3), activation='relu', padding='same', trainable=False), name='block4_conv2'))
+    model.add(TimeDistributed(Convolution2D(512, (3, 3), activation='relu', padding='same', trainable=False), name='block4_conv3'))
     model.add(TimeDistributed(MaxPooling2D((2, 2), strides=(2, 2)), name='block4_pool'))
-
-    for layer in model.layers:
-        layer.trainable = False
 
     # # Block 5
     model.add(TimeDistributed(Convolution2D(512, (3, 3), activation='relu', padding='same'), name='block5_conv1'))
@@ -104,31 +101,31 @@ def filtered_vgg_16_plus_lstm(weights=None, timestep=10, img_width=224, img_heig
     prev_values_input = Input(shape=(timestep, 21))
 
     # Block 1
-    x = TimeDistributed(Convolution2D(64, (3, 3), activation='relu', padding='same'), name='block1_conv1')(main_input)
-    x = TimeDistributed(Convolution2D(64, (3, 3), activation='relu', padding='same'), name='block1_conv2')(x)
+    x = TimeDistributed(Convolution2D(64, (3, 3), activation='relu', padding='same', trainable=False), name='block1_conv1')(main_input)
+    x = TimeDistributed(Convolution2D(64, (3, 3), activation='relu', padding='same', trainable=False), name='block1_conv2')(x)
     x = TimeDistributed(MaxPooling2D((2, 2), strides=(2, 2)), name='block1_pool')(x)
 
     # Block 2
-    x = TimeDistributed(Convolution2D(128, (3, 3), activation='relu', padding='same'), name='block2_conv1')(x)
-    x = TimeDistributed(Convolution2D(128, (3, 3), activation='relu', padding='same'), name='block2_conv2')(x)
+    x = TimeDistributed(Convolution2D(128, (3, 3), activation='relu', padding='same', trainable=False), name='block2_conv1')(x)
+    x = TimeDistributed(Convolution2D(128, (3, 3), activation='relu', padding='same', trainable=False), name='block2_conv2')(x)
     x = TimeDistributed(MaxPooling2D((2, 2), strides=(2, 2)), name='block2_pool')(x)
 
     # # Block 3
-    x = TimeDistributed(Convolution2D(256, (3, 3), activation='relu', padding='same'), name='block3_conv1')(x)
-    x = TimeDistributed(Convolution2D(256, (3, 3), activation='relu', padding='same'), name='block3_conv2')(x)
-    x = TimeDistributed(Convolution2D(256, (3, 3), activation='relu', padding='same'), name='block3_conv3')(x)
+    x = TimeDistributed(Convolution2D(256, (3, 3), activation='relu', padding='same', trainable=False), name='block3_conv1')(x)
+    x = TimeDistributed(Convolution2D(256, (3, 3), activation='relu', padding='same', trainable=False), name='block3_conv2')(x)
+    x = TimeDistributed(Convolution2D(256, (3, 3), activation='relu', padding='same', trainable=False), name='block3_conv3')(x)
     x = TimeDistributed(MaxPooling2D((2, 2), strides=(2, 2)), name='block3_pool')(x)
 
     # Block 4
-    x = TimeDistributed(Convolution2D(512, (3, 3), activation='relu', padding='same'), name='block4_conv1')(x)
-    x = TimeDistributed(Convolution2D(512, (3, 3), activation='relu', padding='same'), name='block4_conv2')(x)
-    x = TimeDistributed(Convolution2D(512, (3, 3), activation='relu', padding='same'), name='block4_conv3')(x)
+    x = TimeDistributed(Convolution2D(512, (3, 3), activation='relu', padding='same', trainable=False), name='block4_conv1')(x)
+    x = TimeDistributed(Convolution2D(512, (3, 3), activation='relu', padding='same', trainable=False), name='block4_conv2')(x)
+    x = TimeDistributed(Convolution2D(512, (3, 3), activation='relu', padding='same', trainable=False), name='block4_conv3')(x)
     x = TimeDistributed(MaxPooling2D((2, 2), strides=(2, 2)), name='block4_pool')(x)
 
     # Block 5
-    x = TimeDistributed(Convolution2D(512, (3, 3), activation='relu', padding='same'), name='block5_conv1')(x)
-    x = TimeDistributed(Convolution2D(512, (3, 3), activation='relu', padding='same'), name='block5_conv2')(x)
-    x = TimeDistributed(Convolution2D(512, (3, 3), activation='relu', padding='same'), name='block5_conv3')(x)
+    x = TimeDistributed(Convolution2D(512, (3, 3), activation='relu', padding='same', trainable=False), name='block5_conv1')(x)
+    x = TimeDistributed(Convolution2D(512, (3, 3), activation='relu', padding='same', trainable=False), name='block5_conv2')(x)
+    x = TimeDistributed(Convolution2D(512, (3, 3), activation='relu', padding='same', trainable=False), name='block5_conv3')(x)
     x = TimeDistributed(MaxPooling2D((2, 2), strides=(2, 2)), name='block5_pool')(x)
 
     # Classification block
@@ -144,7 +141,7 @@ def filtered_vgg_16_plus_lstm(weights=None, timestep=10, img_width=224, img_heig
     x = add([x, prev_values_input]) 
 
     x = TimeDistributed(Dropout(0.5))(x)
-    x = LSTM(256, return_sequences=True, name='lstm1')(x)
+    x = LSTM(128, return_sequences=True, name='lstm1')(x)
     x = TimeDistributed(Dropout(0.5))(x)
     x = TimeDistributed(Dense(21, activation='softmax'), name='predictions_')(x)
         
@@ -152,4 +149,5 @@ def filtered_vgg_16_plus_lstm(weights=None, timestep=10, img_width=224, img_heig
 
     if weights:
         model.load_weights(weights, by_name=True)
+
     return model

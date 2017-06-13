@@ -153,7 +153,7 @@ if __name__ == '__main__':
 
     if K.backend() == 'tensorflow':
         import keras.backend.tensorflow_backend as KTF
-        KTF.set_session(get_session(0.25))
+        KTF.set_session(get_session(0.33))
 
     args = parse_args()
     train_net(args.timestep, args.overlap)

@@ -80,7 +80,7 @@ def train_net(timestep=10, overlap=2):
         loss = list()
         mask = np.ones((1, timestep, num_classes))
         prev_values = np.zeros((1, timestep, num_classes))
-        for epoch in np.arange(10):
+        for epoch in np.arange(5):
 
             epoch_train_acc = list()
             epoch_val_acc = list()

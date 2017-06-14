@@ -31,6 +31,25 @@ def inceptionV3_first_phase_model(weights='imagenet', img_width=224, img_height=
 
     return model
 
+def inceptionV3_second_phase_model(weights='imagenet', img_width=224, img_height=224):
+    base_model = InceptionV3(weights=weights, include_top=False, input_shape=(img_width, img_height, 3))
+
+    x = base_model.output
+    x = GlobalAveragePooling2D()(x)
+    x = Dense(1024, activation='relu')(x)
+    predictions = Dense(21, activation='softmax')(x)
+
+    # this is the model we will train
+    model = Model(inputs=base_model.input, outputs=predictions)
+
+    # we chose to train the top 2 inception blocks, i.e. we will freeze
+    # the first 249 layers and unfreeze the rest:
+    for layer in model.layers[:249]:
+       layer.trainable = False
+    for layer in model.layers[249:]:
+       layer.trainable = True
+
+    return model
 
 def vgg16_first_phase_model(weights='imagenet', img_width=224, img_height=224):
     base_model = vgg16.VGG16(include_top=False, weights=weights, input_shape=(img_width, img_height, 3))

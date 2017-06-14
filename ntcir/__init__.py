@@ -134,14 +134,30 @@ def get_batches(split_set, sequences, batch_size=10, overlap=0):
             start_ind = s.start
             end_ind = start_ind + batch_size
             while end_ind <= s.end:
-                
                 indices = np.arange(start_ind, end_ind)
-                b = Batch(user_id, date, indices)           
+                b = Batch(user_id, date, indices)
                 batches.append(b)
-                
-                start_ind = end_ind-overlap
+
+                start_ind = end_ind - overlap
                 end_ind = start_ind + batch_size
     return batches
+
+
+def get_piggyback_batches(split_set, sequences, batch_size=10, overlap=2):
+    sequence_batches = list()
+    non_overlaping = batch_size - overlap
+    for user_id, date in split_set:
+        for s in sequences[user_id][date]:
+            for start_ind in range(s.start, s.end - batch_size):
+                batches = list()
+                end_ind = (int((s.end - start_ind - batch_size) / non_overlaping) + 1) * non_overlaping + start_ind
+                for ind in range(start_ind, end_ind, non_overlaping):
+                    indices = np.arange(ind, ind + batch_size)
+                    b = Batch(user_id, date, indices)
+                    batches.append(b)
+                sequence_batches.append(batches)
+    return sequence_batches
+
 
 import IO
 

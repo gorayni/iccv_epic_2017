@@ -39,11 +39,7 @@ def train_net(timestep=10, overlap=2):
     validation_set = ntcir.read_split('validation_split.txt')
 
     num_training_batches = 0
-    training_batches = list()
-    for user_id, date in training_set:
-        batches = ntcir.get_batches([(user_id, date)], sequences, overlap=overlap, batch_size=timestep)
-        num_training_batches += len(batches)
-        training_batches.append(batches)
+    training_batches = ntcir.get_piggyback_batches(training_set, sequences, batch_size=timestep, overlap=overlap)
 
     num_validation_batches = 0
     validation_batches = list()

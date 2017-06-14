@@ -127,31 +127,34 @@ def get_training_batches(training_set, sequences, batch_size=10):
     return batches
 
 
-def get_batches(split_set, sequences, batch_size=10, overlap=0):
+def get_batches(split_set, sequences, batch_size=10, overlap=0, include_last=False):
     batches = list()
+    non_overlapping = batch_size - overlap
     for user_id, date in split_set:
         for s in sequences[user_id][date]:
-            start_ind = s.start
-            end_ind = start_ind + batch_size
-            while end_ind <= s.end:
-                indices = np.arange(start_ind, end_ind)
-                b = Batch(user_id, date, indices)
-                batches.append(b)
+            end_ind = (int((s.end - s.start - batch_size) / non_overlapping) + 1) * non_overlapping + s.start
 
-                start_ind = end_ind - overlap
-                end_ind = start_ind + batch_size
+            ind = s.start
+            while ind < end_ind:
+                indices = np.arange(ind, ind + batch_size)
+                batches.append(Batch(user_id, date, indices))
+                ind += non_overlapping
+
+            if include_last and ind < s.end:
+                indices = np.arange(ind, s.end)
+                batches.append(Batch(user_id, date, indices))
     return batches
 
 
 def get_piggyback_batches(split_set, sequences, batch_size=10, overlap=2):
     sequence_batches = list()
-    non_overlaping = batch_size - overlap
+    non_overlapping = batch_size - overlap
     for user_id, date in split_set:
         for s in sequences[user_id][date]:
             for start_ind in range(s.start, s.start + batch_size):
                 batches = list()
-                end_ind = (int((s.end - start_ind - batch_size) / non_overlaping) + 1) * non_overlaping + start_ind
-                for ind in range(start_ind, end_ind, non_overlaping):
+                end_ind = (int((s.end - start_ind - batch_size) / non_overlapping) + 1) * non_overlapping + start_ind
+                for ind in range(start_ind, end_ind, non_overlapping):
                     indices = np.arange(ind, ind + batch_size)
                     b = Batch(user_id, date, indices)
                     batches.append(b)

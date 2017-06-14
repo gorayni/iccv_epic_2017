@@ -31,11 +31,13 @@ class HistoryLog(Callback):
         np.savetxt(fpath, epoch.T, delimiter=",")
 
 
-def load_images_batch(image_data_generator, users, batch, num_classes=21, target_size=(224, 224)):
+def load_images_batch(image_data_generator, users, batch, num_classes=21, target_size=(224, 224), batch_size=None):
     image_shape = target_size + (3,)
 
-    batch_x = np.zeros((1,batch.size,) + image_shape, dtype=K.floatx())
-    batch_y = np.zeros((1,batch.size, num_classes), dtype='float32')
+    if not batch_size:
+        batch_size = batch.size
+    batch_x = np.zeros((1, batch_size,) + image_shape, dtype=K.floatx())
+    batch_y = np.zeros((1, batch_size, num_classes), dtype='float32')
 
     for i, ind in enumerate(batch.indices):
         image = users[batch.user_id][batch.date].images[ind]

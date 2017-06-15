@@ -15,7 +15,7 @@ from keras.layers import multiply
 from keras.layers import GlobalAveragePooling2D
 
 
-def inceptionV3_first_phase_model(weights='imagenet', img_width=224, img_height=224):
+def inceptionV3_first_phase_model(weights='imagenet', img_width=299, img_height=299):
     base_model = InceptionV3(weights=weights, include_top=False, input_shape=(img_width, img_height, 3))
 
     x = base_model.output
@@ -31,6 +31,7 @@ def inceptionV3_first_phase_model(weights='imagenet', img_width=224, img_height=
 
     return model
 
+
 def inceptionV3_second_phase_model(weights='imagenet', img_width=224, img_height=224):
     base_model = InceptionV3(weights=weights, include_top=False, input_shape=(img_width, img_height, 3))
 
@@ -45,11 +46,12 @@ def inceptionV3_second_phase_model(weights='imagenet', img_width=224, img_height
     # we chose to train the top 2 inception blocks, i.e. we will freeze
     # the first 249 layers and unfreeze the rest:
     for layer in model.layers[:249]:
-       layer.trainable = False
+        layer.trainable = False
     for layer in model.layers[249:]:
-       layer.trainable = True
+        layer.trainable = True
 
     return model
+
 
 def vgg16_first_phase_model(weights='imagenet', img_width=224, img_height=224):
     base_model = vgg16.VGG16(include_top=False, weights=weights, input_shape=(img_width, img_height, 3))
@@ -131,7 +133,7 @@ def vgg_16_plus_lstm(weights=None, vgg16_weights=None, timestep=10, img_width=22
         model.load_weights(vgg16_weights, by_name=True)
 
     model.add(TimeDistributed(Dropout(0.5)))
-    model.add(LSTM(512, name='lstm1', return_sequences=True))
+    model.add(LSTM(256, name='lstm1', return_sequences=True))
     model.add(TimeDistributed(Dropout(0.5)))
     model.add(TimeDistributed(Dense(21, activation='softmax'), name='predictions'))
 

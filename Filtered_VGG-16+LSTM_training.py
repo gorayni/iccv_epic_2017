@@ -88,29 +88,29 @@ def train_net(timestep=10, overlap=2):
 
             np.random.shuffle(training_batches)
             for day_batches in training_batches:
-                mask[:, -overlap:, :] = 1
-                prev_values[:, -overlap:, :] = 0
+                mask[:, :overlap, :] = 1
+                prev_values[:, :overlap, :] = 0
                 for batch in day_batches:
                     batch_x, batch_y = load_images_batch(train_datagen, users, batch)
                     batch_loss, batch_acc = model.train_on_batch([batch_x, mask, prev_values], [batch_y])
                     prediction = model.predict_on_batch([batch_x, mask, prev_values])
 
-                    mask[:, -overlap:, :] = 0
-                    prev_values[:, -overlap:, :] = prediction[:, -overlap:, :]
+                    mask[:, :overlap, :] = 0
+                    prev_values[:, :overlap, :] = prediction[:, -overlap:, :]
 
                     epoch_train_acc.append(batch_acc)
                     loss.append(batch_loss)
 
             for day_batches in validation_batches:
-                mask[:, -overlap:, :] = 1
-                prev_values[:, -overlap:, :] = 0
+                mask[:, :overlap, :] = 1
+                prev_values[:, :overlap, :] = 0
                 for batch in day_batches:
                     batch_x, batch_y = load_images_batch(val_datagen, users, batch)
                     batch_loss, batch_acc = model.test_on_batch([batch_x, mask, prev_values], [batch_y])
                     prediction = model.predict_on_batch([batch_x, mask, prev_values])
 
-                    mask[:, -overlap:, :] = 0
-                    prev_values[:, -overlap:, :] = prediction[:, -overlap:, :]
+                    mask[:, :overlap, :] = 0
+                    prev_values[:, :overlap, :] = prediction[:, -overlap:, :]
 
                     epoch_val_acc.append(batch_acc)
 

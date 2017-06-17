@@ -1,6 +1,7 @@
 from __future__ import division
 import sklearn.metrics as metrics
 import numpy as np
+from easydict import EasyDict as edict
 
 
 def predict(model, features, users, sequences, split_set, window_size=10):
@@ -29,3 +30,12 @@ def test(model, features, users, sequences, split_set, window_size=10):
     predictions, groundtruth = predict(model, features, users, sequences, split_set, window_size)
     accuracy = metrics.accuracy_score(groundtruth, predictions)
     return predictions, groundtruth, accuracy
+
+
+def evaluate(groundtruth, predictions):
+    return edict({'accuracy': metrics.accuracy_score(groundtruth, predictions),
+                  'macro_precision': metrics.precision_score(groundtruth, predictions, average='macro'),
+                  'macro_recall': metrics.recall_score(groundtruth, predictions, average='macro'),
+                  'macro_f1': metrics.f1_score(groundtruth, predictions, average='macro'),
+                  'recall': metrics.recall_score(groundtruth, predictions, average=None)
+                  })

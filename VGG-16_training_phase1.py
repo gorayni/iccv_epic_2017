@@ -40,18 +40,18 @@ validation_generator = val_datagen.flow_from_directory(
         batch_size=1)
 
 # checkpoint
-weights_filepath="weights.VGG-16.{epoch:02d}.hdf5"
+weights_filepath="weights.VGG-16.phase_1.{epoch:02d}.hdf5"
 checkpoint = ModelCheckpoint(weights_filepath, monitor='val_acc', verbose=1, save_best_only=False)
 history = HistoryLog()
 
 # fine-tune the model
 model.fit_generator(
         train_generator,
-        steps_per_epoch=36095,#36095,#15,
+        steps_per_epoch=36095,
         epochs=10,
         callbacks=[checkpoint, history],
         validation_data=validation_generator,
-        validation_steps=6225)#6225)#20)
+        validation_steps=2582)
 
 loss_filepath = "loss.log"
 history.log_training_loss(loss_filepath)

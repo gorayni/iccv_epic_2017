@@ -33,7 +33,7 @@ seed = 42
 np.random.seed(seed)
 
 sgd = SGD(lr=0.00004, decay=0.000005, momentum=0.9, nesterov=True)
-model = exp.vgg_16_second_phase_model(weights='weights.VGG-16.phase2.04.hdf5')
+model = exp.vgg_16_second_phase_model(weights='weights.VGG-16.phase_1.10.hdf5')
 model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
 
 # prepare data augmentation configuration
@@ -58,7 +58,7 @@ validation_generator = val_datagen.flow_from_directory(
         batch_size=1)
 
 # checkpoint
-weights_filepath="weights.VGG-16.phase2.{epoch:02d}.hdf5"
+weights_filepath="weights.VGG-16.phase_2.{epoch:02d}.hdf5"
 checkpoint = ModelCheckpoint(weights_filepath, monitor='val_acc', verbose=1)
 history = HistoryLog()
 
@@ -68,7 +68,7 @@ model.fit_generator(
         steps_per_epoch=36095,
         epochs=10,
         callbacks=[checkpoint, history],
-        validation_data=validation_generator,        
+        validation_data=validation_generator,
         validation_steps=2582,
         initial_epoch=5)
 

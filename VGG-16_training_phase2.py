@@ -9,13 +9,31 @@ from keras.callbacks import ModelCheckpoint
 from experiments.utils import HistoryLog
 import experiments as exp
 
+import os
+
+def get_session(gpu_fraction=0.8):
+    import tensorflow as tf
+
+    num_threads = os.environ.get('OMP_NUM_THREADS')
+    gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=gpu_fraction)
+
+    if num_threads:
+        return tf.Session(config=tf.ConfigProto(
+            gpu_options=gpu_options, intra_op_parallelism_threads=num_threads))
+    else:
+        return tf.Session(config=tf.ConfigProto(gpu_options=gpu_options))
+
+if K.backend() == 'tensorflow':
+    import keras.backend.tensorflow_backend as KTF
+    KTF.set_session(get_session(0.8))
+
 img_width, img_height = 224, 224
 
 seed = 42
 np.random.seed(seed)
 
 sgd = SGD(lr=0.00004, decay=0.000005, momentum=0.9, nesterov=True)
-model = exp.vgg_16_second_phase_model(weights='weights.VGG-16.09.hdf5')
+model = exp.vgg_16_second_phase_model(weights='weights.VGG-16.phase2.04.hdf5')
 model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
 
 # prepare data augmentation configuration
@@ -47,12 +65,12 @@ history = HistoryLog()
 # fine-tune the model
 model.fit_generator(
         train_generator,
-        steps_per_epoch=36095,#36095,#15,
+        steps_per_epoch=36095,
         epochs=10,
         callbacks=[checkpoint, history],
-        initial_epoch=4,
         validation_data=validation_generator,        
-        validation_steps=6225)#6225)#20)
+        validation_steps=2582,
+        initial_epoch=5)
 
 loss_filepath = "loss.log"
 history.log_training_loss(loss_filepath)

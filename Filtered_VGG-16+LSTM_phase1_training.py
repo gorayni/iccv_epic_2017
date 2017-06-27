@@ -53,66 +53,70 @@ def train_net(timestep=10, overlap=2):
     mask = np.ones((1, timestep, num_classes))
     prev_values = np.zeros((1, timestep, num_classes))
 
-    for learning_rate in [0.000025]:
-        K.set_learning_phase(1)
+    if timestep == 5:
+        learning_rate = 0.000025
+    else:
+        learning_rate = 0.0001
 
-        train_datagen = ImageDataGenerator(rescale=1. / 255,
-                                           rotation_range=40,
-                                           width_shift_range=0.2,
-                                           height_shift_range=0.2,
-                                           zoom_range=0.2,
-                                           horizontal_flip=True)
+    K.set_learning_phase(1)
 
-        val_datagen = ImageDataGenerator(rescale=1. / 255)
+    train_datagen = ImageDataGenerator(rescale=1. / 255,
+                                       rotation_range=40,
+                                       width_shift_range=0.2,
+                                       height_shift_range=0.2,
+                                       zoom_range=0.2,
+                                       horizontal_flip=True)
 
-        sgd = SGD(lr=learning_rate, decay=0.000005, momentum=0.9, nesterov=True)
-        model = exp.filtered_vgg_16_plus_lstm(base_model_weights, timestep=timestep)
+    val_datagen = ImageDataGenerator(rescale=1. / 255)
 
-        model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
+    sgd = SGD(lr=learning_rate, decay=0.000005, momentum=0.9, nesterov=True)
+    model = exp.filtered_vgg_16_plus_lstm(base_model_weights, timestep=timestep)
 
-        np.random.seed(42)
+    model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
 
-        train_acc = list()
-        val_acc = list()
-        loss = list()
-        for epoch in np.arange(10):
+    np.random.seed(42)
 
-            epoch_train_acc = list()
-            epoch_val_acc = list()
+    train_acc = list()
+    val_acc = list()
+    loss = list()
+    for epoch in np.arange(10):
 
-            np.random.shuffle(training_batches)
-            for batch in training_batches:
-                batch_x, batch_y = load_images_batch(train_datagen, users, batch)
-                batch_loss, batch_acc = model.train_on_batch([batch_x, mask, prev_values], [batch_y])
+        epoch_train_acc = list()
+        epoch_val_acc = list()
 
-                epoch_train_acc.append(batch_acc)
-                loss.append(batch_loss)
+        np.random.shuffle(training_batches)
+        for batch in training_batches:
+            batch_x, batch_y = load_images_batch(train_datagen, users, batch)
+            batch_loss, batch_acc = model.train_on_batch([batch_x, mask, prev_values], [batch_y])
 
-            for batch in validation_batches:
-                batch_x, batch_y = load_images_batch(val_datagen, users, batch)
-                batch_loss, batch_acc = model.test_on_batch([batch_x, mask, prev_values], [batch_y])
+            epoch_train_acc.append(batch_acc)
+            loss.append(batch_loss)
 
-                epoch_val_acc.append(batch_acc)
+        for batch in validation_batches:
+            batch_x, batch_y = load_images_batch(val_datagen, users, batch)
+            batch_loss, batch_acc = model.test_on_batch([batch_x, mask, prev_values], [batch_y])
 
-            epoch_train_acc = np.sum(epoch_train_acc) / num_training_batches
-            epoch_val_acc = np.sum(epoch_val_acc) / num_validation_batches
-            print 'Epoch: {}, Train Acc: {}, Validation Acc: {}'.format(epoch + 1, epoch_train_acc, epoch_val_acc)
+            epoch_val_acc.append(batch_acc)
 
-            model.save(weights_filepath.format(lr=learning_rate, epoch=epoch + 1))
+        epoch_train_acc = np.sum(epoch_train_acc) / num_training_batches
+        epoch_val_acc = np.sum(epoch_val_acc) / num_validation_batches
+        print 'Epoch: {}, Train Acc: {}, Validation Acc: {}'.format(epoch + 1, epoch_train_acc, epoch_val_acc)
 
-            train_acc.append(epoch_train_acc)
-            val_acc.append(epoch_val_acc)
+        model.save(weights_filepath.format(lr=learning_rate, epoch=epoch + 1))
 
-        loss = np.asarray(loss)
-        train_acc = np.asarray(train_acc)
-        val_acc = np.asarray(val_acc)
+        train_acc.append(epoch_train_acc)
+        val_acc.append(epoch_val_acc)
 
-        np.savetxt(model_fname + '.lr_{}.acc.log'.format(learning_rate), np.vstack((train_acc, val_acc)).T,
-                   delimiter=",")
-        np.savetxt(model_fname + '.lr_{}.loss.log'.format(learning_rate), loss.T, delimiter=",")
+    loss = np.asarray(loss)
+    train_acc = np.asarray(train_acc)
+    val_acc = np.asarray(val_acc)
 
-        if K.backend() == 'tensorflow':
-            K.clear_session()
+    np.savetxt(model_fname + '.lr_{}.acc.log'.format(learning_rate), np.vstack((train_acc, val_acc)).T,
+               delimiter=",")
+    np.savetxt(model_fname + '.lr_{}.loss.log'.format(learning_rate), loss.T, delimiter=",")
+
+    if K.backend() == 'tensorflow':
+        K.clear_session()
 
 
 def parse_args():

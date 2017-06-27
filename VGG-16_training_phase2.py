@@ -37,7 +37,7 @@ seed = 42
 np.random.seed(seed)
 
 sgd = SGD(lr=0.00004, decay=0.000005, momentum=0.9, nesterov=True)
-model = exp.vgg_16_second_phase_model(weights='weights.VGG-16.phase_1.10.hdf5')
+model = exp.vgg_16_second_phase_model(weights='weights.VGG-16.phase_1.09.hdf5')
 model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
 
 # prepare data augmentation configuration

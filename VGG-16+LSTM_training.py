@@ -45,52 +45,57 @@ def train_net(timestep=10):
     backend = 'tf' if K.backend() == 'tensorflow' else 'th'
 
     base_model_weights = 'weights.VGG-16.best.{}.hdf5'.format(backend)
-    for learning_rate in [0.0001, 0.00005, 0.000025, 0.000075]:
-        K.set_learning_phase(1)
 
-        np.random.seed(42)
-        sgd = SGD(lr=learning_rate, decay=0.000005, momentum=0.9, nesterov=True)
+    if timestep == 5:
+        learning_rate = 0.000025
+    else:
+        learning_rate = 0.0001
 
-        model = exp.vgg_16_plus_lstm(vgg16_weights=base_model_weights, timestep=timestep)
-        model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
+    K.set_learning_phase(1)
 
-        # prepare data augmentation configuration
-        train_datagen = ImageDataGenerator(rescale=1. / 255,
-                                           rotation_range=40,
-                                           width_shift_range=0.2,
-                                           height_shift_range=0.2,
-                                           zoom_range=0.2,
-                                           horizontal_flip=True)
+    np.random.seed(42)
+    sgd = SGD(lr=learning_rate, decay=0.000005, momentum=0.9, nesterov=True)
 
-        val_datagen = ImageDataGenerator(rescale=1. / 255)
+    model = exp.vgg_16_plus_lstm(vgg16_weights=base_model_weights, timestep=timestep)
+    model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
 
-        train_generator = generate_batch(train_datagen, users, training_batches)
+    # prepare data augmentation configuration
+    train_datagen = ImageDataGenerator(rescale=1. / 255,
+                                       rotation_range=40,
+                                       width_shift_range=0.2,
+                                       height_shift_range=0.2,
+                                       zoom_range=0.2,
+                                       horizontal_flip=True)
 
-        val_generator = generate_batch(val_datagen, users, validation_batches)
+    val_datagen = ImageDataGenerator(rescale=1. / 255)
 
-        # checkpoint
-        weights_filepath = "weights.VGG-16+LSTM.timesteps_" + str(timestep) + ".lr_" + str(
-            learning_rate) + ".{epoch:02d}." + backend + ".hdf5"
-        checkpoint = ModelCheckpoint(weights_filepath, monitor='val_acc', verbose=1)
-        history = HistoryLog()
+    train_generator = generate_batch(train_datagen, users, training_batches)
 
-        # fine-tune the model
-        model.fit_generator(
-            train_generator,
-            steps_per_epoch=len(training_batches),
-            epochs=5,
-            callbacks=[checkpoint, history],
-            validation_data=val_generator,
-            validation_steps=len(validation_batches))
+    val_generator = generate_batch(val_datagen, users, validation_batches)
 
-        loss_filepath = "VGG-16+LSTM.timesteps_" + str(timestep) + ".lr_{}.loss.log".format(learning_rate)
-        history.log_training_loss(loss_filepath)
+    # checkpoint
+    weights_filepath = "weights.VGG-16+LSTM.timesteps_" + str(timestep) + ".lr_" + str(
+        learning_rate) + ".{epoch:02d}." + backend + ".hdf5"
+    checkpoint = ModelCheckpoint(weights_filepath, monitor='val_acc', verbose=1)
+    history = HistoryLog()
 
-        epoch_filepath = "VGG-16+LSTM.timesteps_" + str(timestep) + ".lr_{}.acc.log".format(learning_rate)
-        history.log_epoch(epoch_filepath)
+    # fine-tune the model
+    model.fit_generator(
+        train_generator,
+        steps_per_epoch=len(training_batches),
+        epochs=5,
+        callbacks=[checkpoint, history],
+        validation_data=val_generator,
+        validation_steps=len(validation_batches))
 
-        if K.backend() == 'tensorflow':
-            K.clear_session()
+    loss_filepath = "VGG-16+LSTM.timesteps_" + str(timestep) + ".lr_{}.loss.log".format(learning_rate)
+    history.log_training_loss(loss_filepath)
+
+    epoch_filepath = "VGG-16+LSTM.timesteps_" + str(timestep) + ".lr_{}.acc.log".format(learning_rate)
+    history.log_epoch(epoch_filepath)
+
+    if K.backend() == 'tensorflow':
+        K.clear_session()
 
 
 def parse_args():

@@ -83,7 +83,7 @@ def train_net(timestep=10):
     model.fit_generator(
         train_generator,
         steps_per_epoch=len(training_batches),
-        epochs=5,
+        epochs=10,
         callbacks=[checkpoint, history],
         validation_data=val_generator,
         validation_steps=len(validation_batches))

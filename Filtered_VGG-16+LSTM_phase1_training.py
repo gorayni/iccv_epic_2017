@@ -50,8 +50,8 @@ def train_net(timestep=10, overlap=2):
     num_training_batches = len(training_batches)
     num_validation_batches = len(validation_batches)
 
-    mask = np.ones((1, timestep, num_classes))
-    prev_values = np.zeros((1, timestep, num_classes))
+    mask = np.ones((1, timestep, 256))
+    prev_values = np.zeros((1, timestep, 256))
 
     if timestep == 5:
         learning_rate = 0.000025

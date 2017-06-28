@@ -195,8 +195,8 @@ def filtered_vgg_16_plus_lstm_first_phase(weights=None, timestep=10, img_width=2
     input_shape = (timestep, img_width, img_height, 3)
 
     main_input = Input(shape=input_shape)
-    mask_input = Input(shape=(timestep, 21))
-    prev_values_input = Input(shape=(timestep, 21))
+    mask_input = Input(shape=(timestep, 256))
+    prev_values_input = Input(shape=(timestep, 256))
 
     # Block 1
     x = TimeDistributed(Convolution2D(64, (3, 3), activation='relu', padding='same', trainable=False),

@@ -70,7 +70,7 @@ def train_net(timestep=10, overlap=2):
     val_datagen = ImageDataGenerator(rescale=1. / 255)
 
     sgd = SGD(lr=learning_rate, decay=0.000005, momentum=0.9, nesterov=True)
-    model = exp.filtered_vgg_16_plus_lstm(base_model_weights, timestep=timestep)
+    model = exp.filtered_vgg_16_plus_lstm_first_phase(base_model_weights, timestep=timestep)
 
     model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
 

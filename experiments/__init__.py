@@ -188,7 +188,7 @@ def filtered_vgg_16_plus_lstm(weights=None, timestep=10, img_width=224, img_heig
     if weights:
         model.load_weights(weights, by_name=True)
 
-    return model
+    return None
 
 
 def filtered_vgg_16_plus_lstm_first_phase(weights=None, timestep=10, img_width=224, img_height=224):

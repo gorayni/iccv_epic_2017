@@ -84,12 +84,12 @@ def train_net(base_model_weights, timestep=10, overlap=2):
     val_acc = list()
     loss = list()
 
+    K.set_learning_phase(1)
     for epoch in np.arange(10):
         epoch_train_acc = list()
         epoch_val_acc = list()
 
         np.random.shuffle(training_batches)
-        K.set_learning_phase(1)
         for day_batches in training_batches:
             mask[:, :overlap, :] = 1
             prev_values[:, :overlap, :] = 0
@@ -103,7 +103,6 @@ def train_net(base_model_weights, timestep=10, overlap=2):
                 epoch_train_acc.append(batch_acc)
                 loss.append(batch_loss)
 
-        K.set_learning_phase(0)
         for day_batches in validation_batches:
             mask[:, :overlap, :] = 1
             prev_values[:, :overlap, :] = 0
@@ -131,9 +130,9 @@ def train_net(base_model_weights, timestep=10, overlap=2):
     train_acc = np.asarray(train_acc)
     val_acc = np.asarray(val_acc)
 
-    np.savetxt(model_fname + '.lr_{}.acc.log'.format(learning_rate), np.vstack((train_acc, val_acc)).T,
+    np.savetxt(model_fname + '.lr_{}.phase_2.acc.log'.format(learning_rate), np.vstack((train_acc, val_acc)).T,
                delimiter=",")
-    np.savetxt(model_fname + '.lr_{}.loss.log'.format(learning_rate), loss.T, delimiter=",")
+    np.savetxt(model_fname + '.lr_{}.phase_2.loss.log'.format(learning_rate), loss.T, delimiter=",")
 
     if K.backend() == 'tensorflow':
         K.clear_session()

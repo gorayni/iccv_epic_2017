@@ -61,6 +61,7 @@ def train_net(base_model_weights, timestep=10, overlap=2):
         learning_rate = 0.000025
     else:
         learning_rate = 0.0001
+    K.set_learning_phase(1)
 
     train_datagen = ImageDataGenerator(rescale=1. / 255,
                                        rotation_range=40,
@@ -84,7 +85,6 @@ def train_net(base_model_weights, timestep=10, overlap=2):
     val_acc = list()
     loss = list()
 
-    K.set_learning_phase(1)
     for epoch in np.arange(10):
         epoch_train_acc = list()
         epoch_val_acc = list()

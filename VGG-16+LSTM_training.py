@@ -111,6 +111,6 @@ if __name__ == '__main__':
 
     if K.backend() == 'tensorflow':
       import keras.backend.tensorflow_backend as KTF
-      KTF.set_session(get_session(0.3))
+      KTF.set_session(get_session())
 
     train_net(args.timestep)

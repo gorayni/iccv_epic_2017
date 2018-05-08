@@ -51,3 +51,4 @@ timestep=5
 ### Downloads
 
 1. VGG-16 [[weights]](https://drive.google.com/file/d/1eBlqGGaXKopDltBu6y9ZjtxGLafqJk9m/view?usp=sharing)
+2. VGG-16+LSTM [[Timestep 5]](https://drive.google.com/open?id=1ZiGfB8aIad2wl3OxkDJogBYuZnaHxShE) [[Timestep 10]](https://drive.google.com/open?id=1q0TMgWt9C3AlKl9pzL5NDIJandtXnJfI)
